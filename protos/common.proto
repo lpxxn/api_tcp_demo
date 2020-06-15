@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package protos;
+
+message Msg {
+    string type = 1;
+    string data = 2;
+}
+
+service HandlerMsg {
+    rpc ProgressMsg (Msg) returns (Msg);
+}
