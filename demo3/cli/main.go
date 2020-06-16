@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/api_tcp_demo/demo2"
+	"github.com/api_tcp_demo/demo3"
 )
 
 func main() {
@@ -15,9 +15,9 @@ func main() {
 		fmt.Printf("connect failed, err : %v\n", err.Error())
 		return
 	}
-	for i := 0; i < 2000; i++ {
+	for i := 0; i < 20000; i++ {
 		go func() {
-			if _, err = demo2.ConnRW.WriteTo(conn, data); err != nil {
+			if _, err = demo3.ConnRW.WriteTo(conn, data); err != nil {
 				fmt.Printf("write failed , err : %v\n", err)
 				panic(err)
 		}

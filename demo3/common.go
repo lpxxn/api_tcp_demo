@@ -1,10 +1,11 @@
-package demo2
+package demo3
 
 import (
 	"encoding/binary"
 	"io"
 	"sync"
 )
+
 type connRW struct {
 	mut sync.Mutex
 }
