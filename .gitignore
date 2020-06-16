@@ -1,0 +1,11 @@
+.idea/
+.idea/*
+*.swp
+*.iml
+.DS_Store
+.classpath
+.project
+.arclint
+.arcconfig
+.vscode/
+
