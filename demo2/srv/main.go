@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"net"
+
+	"github.com/api_tcp_demo/demo2"
 )
 
 func main() {
@@ -28,9 +30,8 @@ func handleConn(conn net.Conn) {
 	fmt.Println("新连接：", conn.RemoteAddr())
 
 	//result := bytes.NewBuffer(nil)
-	var buf [1024]byte
 	for {
-		n, err := conn.Read(buf[:])
+		buf, err := demo2.ReadResponse(conn)
 		//result.Write(buf[0:n])
 		if err != nil {
 			if err == io.EOF {
@@ -40,7 +41,7 @@ func handleConn(conn net.Conn) {
 				break
 			}
 		} else {
-			fmt.Printf("len %d recv: %s \n", n, string(buf[0:n]))
+			fmt.Printf("len %d recv: %s \n", len(buf), string(buf))
 		}
 		//result.Reset()
 	}

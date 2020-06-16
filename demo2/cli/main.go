@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"time"
+
+	"github.com/api_tcp_demo/demo2"
 )
 
 func main() {
@@ -14,9 +16,12 @@ func main() {
 		return
 	}
 	for i := 0; i < 2000; i++ {
-		if _, err = conn.Write(data); err != nil {
-			fmt.Printf("write failed , err : %v\n", err)
-			break
+		go func() {
+			if _, err = demo2.WriteTo(conn, data); err != nil {
+				fmt.Printf("write failed , err : %v\n", err)
+				panic(err)
 		}
+		}()
 	}
+	time.Sleep(time.Second * 5)
 }
