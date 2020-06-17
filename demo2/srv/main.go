@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"time"
 
 	"github.com/api_tcp_demo/demo2"
 )
@@ -30,19 +31,23 @@ func handleConn(conn net.Conn) {
 	fmt.Println("新连接：", conn.RemoteAddr())
 
 	//result := bytes.NewBuffer(nil)
+	start := time.Now()
+	idx := 0
 	for {
 		buf, err := demo2.ConnRW.ReadResponse(conn)
 		//result.Write(buf[0:n])
 		if err != nil {
 			if err == io.EOF {
-				continue
+				break
 			} else {
 				fmt.Println("read err:", err)
 				break
 			}
 		} else {
-			fmt.Printf("len %d recv: %s \n", len(buf), string(buf))
+			idx++
+			fmt.Printf("len %d recv: %s idx: %d\n", len(buf), string(buf), idx)
 		}
 		//result.Reset()
 	}
+	println(time.Since(start).Seconds())
 }

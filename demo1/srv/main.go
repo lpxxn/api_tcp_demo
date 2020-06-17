@@ -34,7 +34,7 @@ func handleConn(conn net.Conn) {
 		//result.Write(buf[0:n])
 		if err != nil {
 			if err == io.EOF {
-				continue
+				break
 			} else {
 				fmt.Println("read err:", err)
 				break

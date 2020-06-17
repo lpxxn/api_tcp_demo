@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"time"
 )
 
 func main() {
@@ -31,12 +32,14 @@ func handleConn(conn net.Conn) {
 
 	result := bytes.NewBuffer(nil)
 	var buf [1024]byte
+	idx := 0
+	start := time.Now()
 	for {
 		n, err := conn.Read(buf[:])
 		result.Write(buf[:n])
 		if err != nil {
 			if err == io.EOF {
-				continue
+				break
 			} else {
 				fmt.Println("read err:", err)
 				break
@@ -53,6 +56,9 @@ func handleConn(conn net.Conn) {
 				if err != nil {
 					panic(err)
 				}
+				if msgSize < 0 {
+					continue
+				}
 				//  4 字节的数据长度+具体数据
 				lenBuf := result.Len()
 				if int32(lenBuf) < msgSize+4 {
@@ -66,8 +72,11 @@ func handleConn(conn net.Conn) {
 					fmt.Println(lenBuf)
 					panic(err)
 				}
-				fmt.Printf("len %d recv: %s \n", len(buf), string(buf))
+				idx++
+				fmt.Printf("len %d recv: %s count: %d \n", len(buf), string(buf), idx)
 			}
 		}
 	}
+
+	println(time.Since(start).Seconds())
 }

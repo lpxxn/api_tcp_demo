@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	data := []byte("[这里才是一个完整的数据包]")
+	data := []byte("~测试数据：一二三四五~")
 	conn, err := net.DialTimeout("tcp", "localhost:4044", time.Second*30)
 	if err != nil {
 		fmt.Printf("connect failed, err : %v\n", err.Error())
 		return
 	}
-	for i := 0; i < 2000; i++ {
+	for i := 0; i < 20000; i++ {
 		go func() {
 			if _, err = demo2.ConnRW.WriteTo(conn, data); err != nil {
 				fmt.Printf("write failed , err : %v\n", err)
@@ -23,5 +23,5 @@ func main() {
 		}
 		}()
 	}
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 4)
 }
