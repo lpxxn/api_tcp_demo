@@ -24,8 +24,7 @@ func main() {
 
 func handleConn(conn net.Conn) {
 	defer conn.Close()
-	defer fmt.Println("关闭")
-	fmt.Println("新连接：", conn.RemoteAddr())
+	fmt.Println("client：", conn.RemoteAddr())
 
 	//result := bytes.NewBuffer(nil)
 	var buf [1024]byte
@@ -33,6 +32,7 @@ func handleConn(conn net.Conn) {
 		n, err := conn.Read(buf[:])
 		//result.Write(buf[0:n])
 		if err != nil {
+			// closed
 			if err == io.EOF {
 				break
 			} else {

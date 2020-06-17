@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/binary"
 	"fmt"
@@ -25,6 +26,7 @@ func main() {
 	}
 }
 
+// 不好 丢数据呀~，可能是我用错了
 func handleConn(conn net.Conn) {
 	defer conn.Close()
 	fmt.Println("client：", conn.RemoteAddr())
@@ -37,6 +39,7 @@ func handleConn(conn net.Conn) {
 		n, err := conn.Read(buf[:])
 		result.Write(buf[:n])
 		if err != nil {
+			// closed
 			if err == io.EOF {
 				break
 			} else {
@@ -44,38 +47,33 @@ func handleConn(conn net.Conn) {
 				break
 			}
 		} else {
-			readBuf(result, idx)
+			scanner := bufio.NewScanner(result)
+			scanner.Split(bufSplit)
+			for scanner.Scan() {
+				idx++
+				msgBuf := scanner.Bytes()
+				fmt.Printf("len %d recv: %s count: %d \n", len(msgBuf), string(msgBuf), idx)
+			}
 		}
 	}
+
 	println(time.Since(start).Seconds())
 }
 
-func readBuf(result *bytes.Buffer, idx int) {
-	for {
-		if result.Len() < 0 || result.Len() < 4 {
-			//fmt.Println("not enough 1111111111")
-			break
-		}
+func bufSplit(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	if !atEOF && len(data) > 4 {
 		var msgSize int32
-		// message size
-		err := binary.Read(bytes.NewReader(result.Bytes()), binary.BigEndian, &msgSize)
-		if err != nil {
-			panic(err)
+		// 读出 数据包中 实际数据 的长度(大小为 0 ~ 2^16)
+		if err := binary.Read(bytes.NewReader(data), binary.BigEndian, &msgSize); err != nil {
+			return 0, nil, err
 		}
-		//  4 字节的数据长度+具体数据
-		lenBuf := result.Len()
-		if int32(lenBuf) < msgSize+4 {
-			fmt.Println("not enough-------------", string(result.Bytes()))
-			break
+		if msgSize < 0 {
+			return
 		}
-		// message binary data
-		msgBuf := make([]byte, msgSize+4)
-		_, err = io.ReadFull(result, msgBuf)
-		if err != nil {
-			fmt.Println(lenBuf)
-			panic(err)
+		totalMsgSize := int(msgSize) + 4
+		if totalMsgSize <= len(data) {
+			return totalMsgSize, data[:totalMsgSize], nil
 		}
-		idx++
-		fmt.Printf("len %d recv: %s count: %d \n", len(msgBuf), string(msgBuf), idx)
 	}
+	return
 }
