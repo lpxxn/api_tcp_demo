@@ -7,15 +7,15 @@ import (
 )
 
 func main() {
-	l, err := net.Listen("tcp", ":4044")
+	l, err := net.Listen("tcp", ":8899")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("listen to 4044")
+	fmt.Println("listen to 8899")
 	for {
 		conn, err := l.Accept()
 		if err != nil {
-			fmt.Println("conn err:", err)
+			panic(err)
 		} else {
 			go handleConn(conn)
 		}
